@@ -1,0 +1,58 @@
+{
+  "terms": {
+    "claim": "Fixture R-17 satisfied all mandatory release checks.",
+    "category": "SOFTWARE",
+    "question": "According to the locked policy and authenticated records, did Fixture R-17 satisfy all mandatory release checks?",
+    "support": "The primary record establishes C1, C2 and C3 passed for R-17; optional checks do not block acceptance.",
+    "refutation": "An authenticated primary record establishes a failed mandatory check for R-17.",
+    "materiality": "A failure for R-16 or optional B1 is not a material refutation. Credible conflicting mandatory R-17 records warrant CONFLICTED.",
+    "scope": "Only the fictional release R-17 and the locked records.",
+    "time_scope": "The published commit-pinned fixture test period.",
+    "context": "Harmless fictional software acceptance demonstration.",
+    "criteria": [
+      {
+        "id": "MANDATORY",
+        "text": "Did all mandatory C1, C2 and C3 checks pass for build R-17 under the locked acceptance policy?"
+      }
+    ],
+    "source_policy": "PINNED_GITHUB_TEXT_V1",
+    "max_sources": 4,
+    "max_bytes": 16384,
+    "challenge_deadline": 1791401286,
+    "adjudication_deadline": 1791404886,
+    "challenger_bond": 1000000000000000
+  },
+  "claimant_manifest": {
+    "sources": [
+      {
+        "url": "https://raw.githubusercontent.com/ANZA24k/ClaimBond/9e9ecbc5572f5d6746f07a0a6ae8792303fec176/fixtures/live_claim/acceptance.md",
+        "sha256": "13e278a1a1a5c7059824353a4f8d599299a488ab0a6580d57379c8551da88587",
+        "bytes": 522,
+        "media_type": "text/markdown"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ANZA24k/ClaimBond/9e9ecbc5572f5d6746f07a0a6ae8792303fec176/fixtures/live_claim/primary.md",
+        "sha256": "4254393f909200f8a9f385c536b7c8bccc4e5cd0324dbe4161cfad3a57a77a46",
+        "bytes": 255,
+        "media_type": "text/markdown"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ANZA24k/ClaimBond/9e9ecbc5572f5d6746f07a0a6ae8792303fec176/fixtures/live_claim/secondary.md",
+        "sha256": "ca9b5c862917d463af817fa179ce97ff5d72d369f29f3e912f8eeebc9e59ddea",
+        "bytes": 207,
+        "media_type": "text/markdown"
+      }
+    ]
+  },
+  "challenger_manifest": {
+    "sources": [
+      {
+        "url": "https://raw.githubusercontent.com/ANZA24k/ClaimBond/9e9ecbc5572f5d6746f07a0a6ae8792303fec176/fixtures/live_claim/challenger.md",
+        "sha256": "45f9b868235e485d8290f786949128b2292c06d26d8be42a75ad94cf6941345a",
+        "bytes": 208,
+        "media_type": "text/markdown"
+      }
+    ]
+  },
+  "value_wei": 1000000000000000
+}
