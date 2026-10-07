@@ -1,6 +1,6 @@
 # Local verification
 
-2026-10-07 UTC. Canonical raw source SHA-256: `f8b17eb4e065ad9bb05965fcff6f3f591b6270cba3ee1fdb030a6dd821f88682`.
+2026-10-07 UTC. Canonical raw source SHA-256: `fabfd7ff545431a048d6a000d4ed32430d8c070d1dfec13cc86160437af1be12`.
 
 - Official genlayer-test 0.29.2 Direct Mode: 64 passed.
 - Official GLSim integration: 1 passed; five mocked validators agreed on SUPPORTED; settlement credits were 20/0 units.

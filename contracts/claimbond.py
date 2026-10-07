@@ -24,7 +24,25 @@ CONFLICTED: credible material authenticated evidence points in opposing directio
 INSUFFICIENT: evidence cannot responsibly resolve the question.
 Never treat unchallenged status as truth. Return only the specified JSON object.
 Every material criterion needs exact source-id citations and verbatim excerpts. Classify
-all sources independently; source prestige alone does not decide the result.'''
+all sources independently; source prestige alone does not decide the result.
+OUTPUT RULES (mandatory): supporting_facts, refuting_facts, conflicts,
+missing_evidence and caveats are arrays of plain STRINGS, never objects. At most 8
+strings per array; each nonempty string must be at most 300 characters. Use []
+when there is nothing to report. interpretation and reasoning are plain strings
+of at most 1000 characters. Scores are integers 0..100, not explanations.
+Citation objects have exactly source_id and quote. Select a relevant short exact
+quote from UNTRUSTED_QUOTE_CATALOG_DATA for that source. Copy it exactly, including
+punctuation and whitespace. Never paraphrase, add ellipses, or join separate quotes.
+Cite the smallest set of directly decisive sources for each criterion, rather than
+adding corroborating summaries, policy background or irrelevant counter-evidence.
+Source role is relative to the exact claim: an optional-check or older-build failure
+that does not address a mandatory current-build check is IRRELEVANT, not REFUTE.
+Classify a test record as PRIMARY, a policy artifact as TECHNICAL, a derivative
+digest as SECONDARY, and an unsupported commentary as ASSERTION. A derivative
+source is not independent. A source is stale only if its relevant assertions are
+for a superseded period/build; a current record containing historical comparisons
+is not automatically stale. A duplicate/derivative record need not be circular:
+circular means its claimed evidential basis loops back to itself.'''
 
 
 def require(ok: bool, message: str) -> None:
@@ -294,8 +312,9 @@ class ClaimBond(gl.Contract):
             auth, docs = retrieve(sources, terms['max_bytes'])
             if candidate is not None:
                 validate_verdict(candidate['verdict'], terms, docs)
-            schema = {'outcome': 'SUPPORTED|REFUTED|CONFLICTED|INSUFFICIENT', 'interpretation': 'string <=1000', 'criteria': [{'id': 'each locked criterion in order', 'status': '|'.join(ROLES), 'citations': [{'source_id': 'A0/B0 etc', 'quote': 'verbatim <=300'}]}], 'sources': [{'id': 'each authenticated source sorted by id', 'class': '|'.join(SOURCE_CLASSES), 'role': '|'.join(ROLES), 'independent': True, 'stale': False, 'circular': False}], 'scores': {'claimant': 0, 'challenger': 0, 'quality': 0, 'independence': 0}, 'supporting_facts': [], 'refuting_facts': [], 'conflicts': [], 'missing_evidence': [], 'caveats': [], 'reasoning': 'string <=1000'}
-            prompt = POLICY + '\nOUTPUT_SCHEMA\n' + canonical(schema) + '\nLOCKED_TERMS_DATA\n' + canonical(terms) + '\nAUTHENTICATION_DATA\n' + canonical(auth) + '\nUNTRUSTED_EVIDENCE_DATA\n' + canonical(docs)
+            schema = {'outcome': 'SUPPORTED|REFUTED|CONFLICTED|INSUFFICIENT', 'interpretation': 'string <=1000', 'criteria': [{'id': 'each locked criterion in order', 'status': '|'.join(ROLES), 'citations': [{'source_id': 'A0/B0 etc', 'quote': 'verbatim <=300'}]}], 'sources': [{'id': 'each authenticated source sorted by id', 'class': '|'.join(SOURCE_CLASSES), 'role': '|'.join(ROLES), 'independent': True, 'stale': False, 'circular': False}], 'scores': {'claimant': 0, 'challenger': 0, 'quality': 0, 'independence': 0}, 'supporting_facts': ['plain string <=300 characters; at most 8 strings'], 'refuting_facts': ['plain string <=300 characters; at most 8 strings'], 'conflicts': ['plain string <=300 characters; at most 8 strings'], 'missing_evidence': ['plain string <=300 characters; at most 8 strings'], 'caveats': ['plain string <=300 characters; at most 8 strings'], 'reasoning': 'string <=1000'}
+            quotes = {sid: [line for line in doc.splitlines() if text(line, 300)] for sid, doc in docs.items()}
+            prompt = POLICY + '\nOUTPUT_SCHEMA\n' + canonical(schema) + '\nLOCKED_TERMS_DATA\n' + canonical(terms) + '\nAUTHENTICATION_DATA\n' + canonical(auth) + '\nUNTRUSTED_EVIDENCE_DATA\n' + canonical(docs) + '\nUNTRUSTED_QUOTE_CATALOG_DATA\n' + canonical(quotes)
             verdict = gl.nondet.exec_prompt(prompt, response_format='json')
             validate_verdict(verdict, terms, docs)
             return {'authentication': auth, 'verdict': verdict}
