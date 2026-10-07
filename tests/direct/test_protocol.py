@@ -225,7 +225,7 @@ def test_leader_verdict_authentication_and_quality(env):
     candidate['verdict']['criteria'][0]['citations'][0]['quote']='fabricated quote'
     assert vm.run_validator(leader_result=candidate) is False
     candidate=copy.deepcopy(state(c,cid)['result'])
-    candidate['verdict']['sources'][0]['class']='SECONDARY'
+    candidate['verdict']['sources'][1]['class']='SECONDARY'
     assert vm.run_validator(leader_result=candidate) is False
     candidate=copy.deepcopy(state(c,cid)['result'])
     candidate['authentication'][0]['sha256']='0'*64
@@ -293,3 +293,25 @@ def test_authenticated_prompt_injection_is_delimited(direct_vm,direct_deploy,dir
 def test_malformed_json_manifest(env,raw):
     vm,c,*_=env;vm.value=10
     with vm.expect_revert():c.create_claim(json.dumps(terms()),raw)
+
+
+def test_incidental_labels_and_scores_do_not_block_consensus(env):
+    vm,c,cid,*_=challenge(env);c.lock_evidence(cid)
+    v=verdict();v['sources'][1]['class']='PRIMARY'
+    mock_all(vm,c,cid,v);c.adjudicate(cid)
+    candidate=copy.deepcopy(state(c,cid)['result'])
+    candidate['verdict']['sources'][3]['class']='ASSERTION'
+    candidate['verdict']['scores']['independence']=12
+    assert vm.run_validator(leader_result=candidate) is True
+
+
+@pytest.mark.parametrize('mutation',['opposing','critical_flags','decisive_record'])
+def test_material_disagreement_still_rejects(env,mutation):
+    vm,c,cid,*_=challenge(env);c.lock_evidence(cid)
+    v=verdict();v['sources'][1]['class']='PRIMARY'
+    mock_all(vm,c,cid,v);c.adjudicate(cid)
+    candidate=copy.deepcopy(state(c,cid)['result'])
+    if mutation=='opposing':candidate['verdict']['sources'][3]['role']='CONFLICT'
+    if mutation=='critical_flags':candidate['verdict']['sources'][1]['independent']=False
+    if mutation=='decisive_record':candidate['verdict']['criteria'][0]['citations']=[dict(source_id='A0',quote='Mandatory checks: C1 deterministic export; C2 backup roundtrip; C3 malformed-input rejection.')]
+    assert vm.run_validator(leader_result=candidate) is False

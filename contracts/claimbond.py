@@ -192,19 +192,41 @@ def validate_verdict(v: dict, terms: dict, docs: dict) -> None:
     require(len(canonical(v)) <= 16000, 'verdict total size')
 
 
+def decisive_ids(verdict: dict, criterion: dict) -> set:
+    rows = {s['id']: s for s in verdict['sources']}
+    ids = {x['source_id'] for x in criterion['citations']
+           if rows[x['source_id']]['role'] not in ('IRRELEVANT', 'MISSING')}
+    direct = {sid for sid in ids if rows[sid]['class'] in ('PRIMARY', 'OFFICIAL', 'PUBLICATION')}
+    if direct:
+        return direct
+    technical = {sid for sid in ids if rows[sid]['class'] == 'TECHNICAL'}
+    return technical if technical else ids
+
+
 def agreement(leader: dict, own: dict) -> bool:
-    # Stable material facts are identified by committed criterion IDs, not prose.
     if leader['authentication'] != own['authentication']:
         return False
     a, b = leader['verdict'], own['verdict']
-    if a['outcome'] != b['outcome'] or a['sources'] != b['sources']:
+    if a['outcome'] != b['outcome']:
         return False
+    critical = set()
     for ca, cb in zip(a['criteria'], b['criteria']):
         if (ca['id'], ca['status']) != (cb['id'], cb['status']):
             return False
-        if sorted({x['source_id'] for x in ca['citations']}) != sorted({x['source_id'] for x in cb['citations']}):
+        da, db = decisive_ids(a, ca), decisive_ids(b, cb)
+        if da != db or (ca['status'] != 'MISSING' and not da):
             return False
-    return all(abs(a['scores'][k] - b['scores'][k]) <= 15 for k in a['scores'])
+        critical.update(da)
+    opposing_a = {s['id'] for s in a['sources'] if s['role'] in ('REFUTE', 'CONFLICT')}
+    opposing_b = {s['id'] for s in b['sources'] if s['role'] in ('REFUTE', 'CONFLICT')}
+    if opposing_a != opposing_b:
+        return False
+    critical.update(opposing_a)
+    qa = {s['id']: s for s in a['sources']}
+    qb = {s['id']: s for s in b['sources']}
+    # Exact quality/role/independence flags for decisive and opposing records.
+    # Other source labels and numeric scores are bounded explanatory diagnostics.
+    return all(qa[sid] == qb[sid] for sid in critical)
 
 
 @gl.evm.contract_interface

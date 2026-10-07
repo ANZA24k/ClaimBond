@@ -19,8 +19,9 @@ optional benchmark is different from a failed mandatory check, and a record for 
 older build may be irrelevant. A byte comparison cannot resolve that dispute.
 Each validator repeats retrieval and analysis; it does not simply endorse a leader's
 reasoning. GenLayer's equivalence rule checks the outcome, material criterion
-statuses and cited source IDs, source-quality classifications, independence/staleness/
-circularity flags, and bounded score differences. Fingerprint results must match exactly.
+statuses and decisive source IDs, and source-quality classifications and
+independence/staleness/circularity flags for decisive or materially opposing records.
+Numeric scores and incidental source labels are explanatory diagnostics. Fingerprint results must match exactly.
 Free-form reasoning and quotations need not match word for word, but every quotation
 must occur in a document that the validating node independently authenticated.
 

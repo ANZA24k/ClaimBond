@@ -1,8 +1,8 @@
 # Local verification
 
-2026-10-07 UTC. Canonical raw source SHA-256: `fabfd7ff545431a048d6a000d4ed32430d8c070d1dfec13cc86160437af1be12`.
+2026-10-07 UTC. Canonical raw source SHA-256: `66889798a1864b37661e9b46e6736f8f5193cfdd22da6ab1675ab7818ed9a27f`.
 
-- Official genlayer-test 0.29.2 Direct Mode: 64 passed.
+- Official genlayer-test 0.29.2 Direct Mode: 68 passed.
 - Official GLSim integration: 1 passed; five mocked validators agreed on SUPPORTED; settlement credits were 20/0 units.
 - genvm-linter 0.11.0 check and validate: passed.
 - Pyright via genvm-lint typecheck: no errors.
