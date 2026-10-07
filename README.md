@@ -123,3 +123,8 @@ opposing credible records from `INSUFFICIENT` evidence. Exact fingerprints may m
 unavailable sources unusable. Conservative agreement can fail even on a sensible
 leader result. Expiry needs a submitted transaction and network liveness. No audited
 production-security or perpetual fund-delivery guarantee is claimed.
+
+
+## Submission package
+
+See [SUBMISSION.md](SUBMISSION.md) for the copy-ready project description, current source identity, CI result and the boundary between current and historical hosted verification.
